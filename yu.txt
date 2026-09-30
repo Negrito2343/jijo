@@ -1,1 +1,2 @@
 jkj
+swag init -g cmd/main.go --parseDependency --parseInternal -d ./,./internal,./cmd

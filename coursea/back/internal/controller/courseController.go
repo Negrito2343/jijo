@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	
 )
 
 
@@ -20,8 +21,16 @@ func NewCourseController (serv interfaces.CourseServicesInterface)*CourseControl
 }
 
 
-
-//-----GET-----
+// GetAllCourseById godoc
+// @Summary      Obtener curso por ID
+// @Description  Devuelve todo el curso asociados a un ID específico
+// @Tags         courses
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "ID del recurso"
+// @Success      200  {object}  map[string]interface{}  "Lista de cursos"
+// @Failure      404  {object}  map[string]string       "Error de validación o de negocio"
+// @Router       /{id} [get]
 func (c *CourseController )GetAllCourseById(h *gin.Context){
 	id := h.Param("id")
 	num, err := strconv.ParseUint(id, 10, 0)

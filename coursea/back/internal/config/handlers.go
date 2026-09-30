@@ -5,6 +5,9 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+    ginSwagger "github.com/swaggo/gin-swagger"
+	
 )
 
 
@@ -36,5 +39,7 @@ func LoadHandlers(courseController *controller.CourseController)(*gin.Engine ){
 	api.DELETE("/module/:id", courseController.DeleteModule)
 	api.DELETE("/module/theme/:id", courseController.DeleteTheme)
 	
+	//-------DOC---------
+	api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	return routers
 }
