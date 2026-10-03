@@ -1,60 +1,111 @@
 
-const data = [
-  {
-    "id": 2,
-    "nombre_curso": "Introducción a Go",
-    "nombre_tutor": "Carlos Ma",
-    "video_presentacion": "https://cdn.midominio.com/videos/intro-go.mp4",
-    "metas_aprendizaje": "Aprender los fundamentos del lenguaje Go y su ecosistema",
-    "admin_id": 0,
-    "modulos": [
-      {
-        "id": 1,
-        "titulo_modulo": "Fundamentos del lenguaje",
-        "numero_modulo": 1,
-        "descripcion_modulo": "Variables, tipos de datos, estructuras de control",
-        "curso_id": 2,
-        "temas": [
-          {"id": 1, "numero_tema": "1.1", "titulo_tema": "Variables y constantes", "url_video": "", "duracion": 15, "descripcion": "", "metas_aprendizaje": "Entender la diferencia entre var y :=", "modulo_id": 1},
-          {"id": 2, "numero_tema": "1.2", "titulo_tema": "Variables y constantes", "url_video": "", "duracion": 15, "descripcion": "", "metas_aprendizaje": "Entender la diferencia entre var y :=", "modulo_id": 1},
-          {"id": 4, "numero_tema": "1.3", "titulo_tema": "Variables y constantes", "url_video": "", "duracion": 15, "descripcion": "", "metas_aprendizaje": "Entender la diferencia entre var y :=", "modulo_id": 1}
-        ]
-      },
-      {
-        "id": 2,
-        "titulo_modulo": "Fundamentos del lenguaje",
-        "numero_modulo": 2,
-        "descripcion_modulo": "Variables, tipos de datos, estructuras de control",
-        "curso_id": 2,
-        "temas": [
-          {"id": 6, "numero_tema": "2.1", "titulo_tema": "Variables y constantes", "url_video": "", "duracion": 15, "descripcion": "", "metas_aprendizaje": "Entender la diferencia entre var y :=", "modulo_id": 2}
-        ]
-      }
-    ]
+import { api } from "./api.js";
+// const data = [
+//   {
+//     "id": 2,
+//     "nombre_curso": "Introducción a Go",
+//     "nombre_tutor": "Carlos Ma",
+//     "video_presentacion": "https://cdn.midominio.com/videos/intro-go.mp4",
+//     "metas_aprendizaje": "Aprender los fundamentos del lenguaje Go y su ecosistema",
+//     "admin_id": 0,
+//     "modulos": [
+//       {
+//         "id": 1,
+//         "titulo_modulo": "Fundamentos del lenguaje",
+//         "numero_modulo": 1,
+//         "descripcion_modulo": "Variables, tipos de datos, estructuras de control",
+//         "curso_id": 2,
+//         "temas": [
+//           {"id": 1, "numero_tema": "1.1", "titulo_tema": "Variables y constantes", "url_video": "", "duracion": 15, "descripcion": "", "metas_aprendizaje": "Entender la diferencia entre var y :=", "modulo_id": 1},
+//           {"id": 2, "numero_tema": "1.2", "titulo_tema": "Variables y constantes", "url_video": "", "duracion": 15, "descripcion": "", "metas_aprendizaje": "Entender la diferencia entre var y :=", "modulo_id": 1},
+//           {"id": 4, "numero_tema": "1.3", "titulo_tema": "Variables y constantes", "url_video": "", "duracion": 15, "descripcion": "", "metas_aprendizaje": "Entender la diferencia entre var y :=", "modulo_id": 1}
+//         ]
+//       },
+//       {
+//         "id": 2,
+//         "titulo_modulo": "Fundamentos del lenguaje",
+//         "numero_modulo": 2,
+//         "descripcion_modulo": "Variables, tipos de datos, estructuras de control",
+//         "curso_id": 2,
+//         "temas": [
+//           {"id": 6, "numero_tema": "2.1", "titulo_tema": "Variables y constantes", "url_video": "", "duracion": 15, "descripcion": "", "metas_aprendizaje": "Entender la diferencia entre var y :=", "modulo_id": 2}
+//         ]
+//       }
+//     ]
+//   }
+// ];
+console.log("start");
+
+const getData = async ()=>{
+    try{
+      console.log("intenasdasd")
+       let resp = await api.getAllCourseById(2);
+      console.log(resp);
+       if(resp.ok == true){
+          console.log(resp.data);
+          
+          return (resp.data);
+       }
+    }catch(e){
+      console.log(e);
+      return [];
+    }
+}
+
+
+let data = []
+let items = ""
+async function init(){
+    let resp = await getData();
+    if( resp.ok == false){
+        data.push([])
+        return
+    }
+    data.push(resp.data);
+    renderCourseList();
+    items = document.querySelectorAll(".course-item")
+
   }
-];
+init()
+//console.log(data.data);
+
 
 let selectedCourseId = null;
 let nextId = 100;
 
 function renderCourseList() {
   const list = document.getElementById('courseList');
-  list.innerHTML = data.map(c => `
-    <div class="course-item ${c.id === selectedCourseId ? 'active' : ''}" onclick="selectCourse(${c.id})">
+
+  
+  if ( data.ok == false){
+    console.log(data);
+    return
+  }
+  ;
+  list.innerHTML =  data.map(c => `
+    <div id=${c.id} class="course-item ${c.id === selectedCourseId ? 'active' : ''}" ">
       <span>${c.nombre_curso}</span>
     </div>
   `).join('');
+  console.log(data);
+
 }
 
+
+console.log(items.length);
+items.forEach(c => {
+  c.addEventListener("click", selectCourse(c.id));
+})
 function selectCourse(id) {
-  selectedCourseId = id;
-  renderCourseList();
-  renderMain();
+  console.log('sad');
+  // selectedCourseId = id;
+  // renderCourseList();
+  // renderMain();
 }
 
 function getCourse(id) { return data.find(c => c.id === id); }
 
-function renderMain() {
+async function renderMain() {
   const main = document.getElementById('mainContent');
   const course = getCourse(selectedCourseId);
   if (!course) { main.innerHTML = '<div class="empty">Selecciona un curso para administrarlo</div>'; return; }
@@ -114,8 +165,11 @@ function openModal(title, body, onSave) {
   document.getElementById('modalSave').onclick = onSave;
 }
 
+document.querySelector(".closeModal").addEventListener("click", closeModal)
 function closeModal() { document.getElementById('modal').classList.remove('open'); }
 
+
+document.querySelector(".addCourse").addEventListener("click", addCourse)
 function addCourse() {
   openModal('Nuevo Curso', `
     <div class="form-row"><label>Nombre del curso</label><input id="f_nombre" type="text"></div>
@@ -241,4 +295,5 @@ function deleteTopic(courseId, moduleId, topicId) {
   renderMain();
 }
 
-renderCourseList();
+
+//await renderCourseList()

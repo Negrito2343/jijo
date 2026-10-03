@@ -24,6 +24,7 @@ func LoadHandlers(courseController *controller.CourseController)(*gin.Engine ){
 
 	
 	api := routers.Group("/api/course")
+
 	//api.GET("/:id", courseController.GetAllCourseById)
 	api.GET("/:id", courseController.GetAllCourseById)
 	//-------POST----------
